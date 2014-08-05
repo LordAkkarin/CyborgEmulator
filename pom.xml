@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Artifact Information -->
+	<groupId>org.evilco.emulator</groupId>
+	<artifactId>parent</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<!-- Artifact Metadata -->
+	<name>Simple Emulator Framework</name>
+	<description>Provides a framework which can be used to create emulators for various architectures..</description>
+	<inceptionYear>2014</inceptionYear>
+
+	<!-- Global Build Properties -->
+	<properties>
+		<!-- Source Encoding -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Java Version -->
+		<java.version>1.7</java.version>
+
+		<!-- Distribution Directory -->
+		<distributionDirectory>${project.basedir}/dist/</distributionDirectory>
+		<extensionDirectory>extension/</extensionDirectory>
+
+		<!-- Module Versions -->
+		<emulator.core.version>1.0-SNAPSHOT</emulator.core.version>
+		<emulator.extension.version>1.0-SNAPSHOT</emulator.extension.version>
+		<emulator.ui.version>1.0-SNAPSHOT</emulator.ui.version>
+	</properties>
+
+	<!-- Global Dependencies -->
+	<dependencies>
+		<!-- Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>17.0</version>
+		</dependency>
+
+		<!-- Log4j2 -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.0</version>
+		</dependency>
+	</dependencies>
+
+	<!-- Sub-Modules -->
+	<modules>
+		<module>core</module>
+		<module>interface</module>
+		<module>extension/code8</module>
+		<module>extension</module>
+	</modules>
+
+	<!-- Global Build Settings -->
+	<build>
+		<plugins>
+			<!-- Distribution Copy -->
+			<plugin>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<source>
+								import org.apache.commons.io.FileUtils
+								import java.io.File;
+
+								if (project.parent != null) {
+									// copy artifact
+									String pathA = (project.build.directory + File.separator + project.build.finalName + ".jar")
+									String pathB = (project.parent.properties['distributionDirectory'] + (project.groupId.endsWith (".extension") ? project.parent.properties['extensionDirectory'] : "") + project.build.finalName + ".jar")
+
+									File artifactA = new File(pathA);
+									File artifactB = new File (pathB);
+
+									FileUtils.copyFile (artifactA, artifactB);
+								}
+							</source>
+						</configuration>
+					</execution>
+				</executions>
+
+				<dependencies>
+					<!-- Commons IO -->
+					<dependency>
+						<groupId>commons-io</groupId>
+						<artifactId>commons-io</artifactId>
+						<version>2.4</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>
